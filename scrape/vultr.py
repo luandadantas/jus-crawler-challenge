@@ -14,11 +14,11 @@ def format_data(card):
     for key_to_remove in ["network", "processor"]:
         if card.get(key_to_remove):
             del card[key_to_remove]
-    
+
     if card.get("cpu"):
         no_space = ""
         for _i in card["cpu"].split("\n"):
-            no_space += " " +  _i.strip()
+            no_space += " " + _i.strip()
         card["cpu"] = no_space.strip()
 
     if card.get("memory"):
@@ -28,7 +28,6 @@ def format_data(card):
     if card.get("price"):
         card["price"] = card["price"].lstrip("$").replace(",", "")
 
-    
     return card
 
 
@@ -50,7 +49,7 @@ def vultr_scrape():
         card = {
             "price": item.cssselect("span.price__value > b")[0].text,
         }
-        
+
         package_list = item.cssselect(".package__list .package__list-item")
         to_zip = get_list_to_zip(len(package_list))
 
