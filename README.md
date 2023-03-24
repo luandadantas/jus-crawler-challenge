@@ -1,5 +1,7 @@
 # Web Crawler Challenge
 
+[![Run Tests](https://github.com/luandadantas/jus-crawler-challenge/actions/workflows/run_tests.yaml/badge.svg)](https://github.com/luandadantas/jus-crawler-challenge/actions/workflows/run_tests.yaml)
+
 Web Crawler that crawls/scrapes machine information at [Vultr](https://www.vultr.com/products/bare-metal/#pricing) and [Hostgator](https://www.hostgator.com/vps-hosting).
 
 This project is the result of a technical challenge described in [this document](challenge_description.md).
