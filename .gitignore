@@ -210,3 +210,4 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,python,linux
 
 scrape_content.json
+scrape_content.csv
