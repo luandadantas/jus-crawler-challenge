@@ -71,7 +71,7 @@ To run tests, run the following command
 - [x] Write/Print on screen the data collected from Vultr
 - [x] Previous step + save content from Vultr website in JSON file
 - [x] Previous step + save content from Vultr website in CSV file
-- [ ] Create all previous steps for Hostgator website.
+- [x] Create all previous steps for Hostgator website.
 
 
 ## Feedback
