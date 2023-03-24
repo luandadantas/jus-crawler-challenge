@@ -8,34 +8,35 @@ class Hostgator:
     URL = "https://www.hostgator.com/vps-hosting"
 
     @staticmethod
-    def format_data(card):
-        if card.get("cpu"):
-            card["cpu"] = card["cpu"].replace(" CPU", "")
-        if card.get("bandwidth"):
-            card["bandwidth"] = card["bandwidth"].replace(" bandwidth", "")
-        if card.get("price"):
-            card["price"] = card["price"].split("/")[0].lstrip("$")
+    def format_data(machine: dict) -> dict:
+        machine["cpu"] = machine["cpu"].replace(" CPU", "")
+        machine["bandwidth"] = machine["bandwidth"].replace(" bandwidth", "")
+        machine["price"] = machine["price"].split("/")[0].lstrip("$")
 
-        return card
+        return machine
 
     @classmethod
-    def scrape(cls):
+    def scrape(cls) -> list[dict]:
         response = requests.get(cls.URL)
+        response.raise_for_status()
+
         html_content = pq(response.text)
 
-        cards_formatted = []
-        for card in html_content("#pricing-card-container")[0]:
-            card_info = {"price": card.cssselect(
-                "p.pricing-card-price")[0].text_content(), }
+        result = []
+        for html_item in html_content("#pricing-card-container")[0]:
+            machine = {
+                "price": html_item.cssselect("p.pricing-card-price")[0].text_content(), 
+            }
 
+            machine_details = html_item.find_class("pricing-card-list")[0]
             to_zip = ["memory", "cpu", "storage", "bandwidth"]
-            for info, item in zip(
-                    to_zip, card.find_class("pricing-card-list")[0]):
-                card_info[info] = item.text
 
-            cards_formatted.append(cls.format_data(card_info))
+            for key, item in zip(to_zip, machine_details):
+                machine[key] = item.text
 
-        return cards_formatted
+            result.append(cls.format_data(machine))
+
+        return result
 
 
 if __name__ == "__main__":

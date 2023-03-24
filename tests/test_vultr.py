@@ -1,13 +1,16 @@
+import pytest
+import requests
+
 from scrape.vultr import Vultr
 
 
-def test_extract_cards_formatted_from_html(requests_mock):
+def test_scrape_with_status_ok(requests_mock):
     with open("tests/vultr.html", 'r') as file:
         html_content = file.read()
         requests_mock.get(Vultr.URL, text=html_content)
 
-    cards_formatted = Vultr.scrape()
-    expected_vultr_cards_formatted = [
+    result = Vultr.scrape()
+    expected_vultr_result = [
         {
             "price": "5000",
             "storage": "2 x 480 GB SSD + 6 x 1.6 TB NVMe",
@@ -94,11 +97,18 @@ def test_extract_cards_formatted_from_html(requests_mock):
         }
     ]
 
-    assert cards_formatted == expected_vultr_cards_formatted
+    assert result == expected_vultr_result
 
 
-def test_formatted_data_card_with_8_items():
-    input_card = {
+def test_scrape_with_status_failed(requests_mock):
+    requests_mock.get(Vultr.URL, status_code=404)
+
+    with pytest.raises(requests.exceptions.HTTPError):
+        Vultr.scrape()
+
+
+def test_format_data_with_eight_items():
+    machine = {
         'price': '$5,000',
         'storage': '2 x 480 GB SSD',
         'nvme': '6 x 1.6 TB NVMe',
@@ -109,7 +119,7 @@ def test_formatted_data_card_with_8_items():
         'network': '25 Gbps Network'
     }
 
-    expected_card_formatted = {
+    expected_machine = {
         "price": "5000",
         "storage": "2 x 480 GB SSD + 6 x 1.6 TB NVMe",
         "cpu": "48 cores / 96 threads @ 2.8GHz",
@@ -117,11 +127,11 @@ def test_formatted_data_card_with_8_items():
         "bandwidth": "15 TB"
     }
 
-    assert Vultr.format_data(input_card) == expected_card_formatted
+    assert Vultr.format_data(machine) == expected_machine
 
 
-def test_formatted_data_card_with_7_items():
-    input_card = {
+def test_format_data_with_seven_items():
+    machine = {
         'price': '$725',
         'storage': '2 x 480 GB SSD',
         'nvme': '2 x 1.92 TB NVMe',
@@ -130,7 +140,7 @@ def test_formatted_data_card_with_7_items():
         'network': '25 Gbps Network'
     }
 
-    expected_card_formatted = {
+    expected_machine = {
         "price": "725",
         "storage": "2 x 480 GB SSD + 2 x 1.92 TB NVMe",
         "cpu": "24 cores / 48 threads @ 2.85GHz",
@@ -138,11 +148,11 @@ def test_formatted_data_card_with_7_items():
         "bandwidth": "10 TB"
     }
 
-    assert Vultr.format_data(input_card) == expected_card_formatted
+    assert Vultr.format_data(machine) == expected_machine
 
 
-def test_formatted_data_card_with_6_items():
-    input_card = {
+def test_format_data_with_six_items():
+    machine = {
         'price': '$120',
         'storage': '2 x 240 GB SSD',
         'cpu': '4 cores /\n\t\t\t\t\t8 threads\n\t\t\t\t\t@ 3.8GHz',
@@ -151,7 +161,7 @@ def test_formatted_data_card_with_6_items():
         'network': '10 Gbps Network'
     }
 
-    expected_card_formatted = {
+    expected_machine = {
         "price": "120",
         "storage": "2 x 240 GB SSD",
         "cpu": "4 cores / 8 threads @ 3.8GHz",
@@ -159,16 +169,16 @@ def test_formatted_data_card_with_6_items():
         "bandwidth": "5 TB"
     }
 
-    assert Vultr.format_data(input_card) == expected_card_formatted
+    assert Vultr.format_data(machine) == expected_machine
 
 
-def test_if_size_list_bigger_then_expected():
+def test_get_list_to_zip_with_size_bigger_then_expected():
     bigger_size = 10
 
     assert Vultr.get_list_to_zip(bigger_size) is None
 
 
-def test_if_size_list_smaller_then_expected():
-    bigger_size = 3
+def test_get_list_to_zip_with_size_smaller_then_expected():
+    smaller_size = 3
 
-    assert Vultr.get_list_to_zip(bigger_size) is None
+    assert Vultr.get_list_to_zip(smaller_size) is None

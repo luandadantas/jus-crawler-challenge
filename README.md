@@ -71,7 +71,7 @@ python scrape/vultr.py
 To run tests, run the following command
 
 ```bash
-  python -m pytest tests/ --disable-socket
+  python -m pytest tests/ --disable-socket -vv
 ```
 
 

@@ -1,13 +1,16 @@
+import pytest
+import requests
+
 from scrape.hostgator import Hostgator
 
 
-def test_extract_cards_formatted_from_html(requests_mock):
+def test_scrape_with_status_ok(requests_mock):
     with open("tests/hostgator.html", 'r') as file:
         html_content = file.read()
         requests_mock.get(Hostgator.URL, text=html_content)
 
-    cards_formatted = Hostgator.scrape()
-    expected_hostgator_cards_formatted = [
+    result = Hostgator.scrape()
+    expected_hostgator_result = [
         {
             "price": "23.95",
             "memory": "2GB RAM",
@@ -31,11 +34,18 @@ def test_extract_cards_formatted_from_html(requests_mock):
         }
     ]
 
-    assert cards_formatted == expected_hostgator_cards_formatted
+    assert result == expected_hostgator_result
 
 
-def test_formatted_data_card():
-    input_card = {
+def test_scrape_with_status_failed(requests_mock):
+    requests_mock.get(Hostgator.URL, status_code=404)
+
+    with pytest.raises(requests.exceptions.HTTPError):
+        Hostgator.scrape()
+
+
+def test_format_data_machine():
+    machine = {
         'price': '$23.95/mo*',
         'memory': '2GB RAM',
         'cpu': '2 core CPU',
@@ -43,7 +53,7 @@ def test_formatted_data_card():
         'bandwidth': 'Unmetered bandwidth'
     }
 
-    expected_card_formatted = {
+    expected_machine = {
         "price": "23.95",
         "memory": "2GB RAM",
         "cpu": "2 core",
@@ -51,4 +61,4 @@ def test_formatted_data_card():
         "bandwidth": "Unmetered"
     }
 
-    assert Hostgator.format_data(input_card) == expected_card_formatted
+    assert Hostgator.format_data(machine) == expected_machine
