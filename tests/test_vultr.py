@@ -1,12 +1,12 @@
-from scrape.vultr import vultr_scrape, URL, format_data, get_list_to_zip
+from scrape.vultr import Vultr
 
 
 def test_extract_cards_formatted_from_html(requests_mock):
     with open("tests/vultr.html", 'r') as file:
         html_content = file.read()
-        requests_mock.get(URL, text=html_content)
+        requests_mock.get(Vultr.URL, text=html_content)
 
-    cards_formatted = vultr_scrape()
+    cards_formatted = Vultr.scrape()
     expected_vultr_cards_formatted = [
         {
             "price": "5000",
@@ -117,7 +117,7 @@ def test_formatted_data_card_with_8_items():
         "bandwidth": "15 TB"
     }
 
-    assert format_data(input_card) == expected_card_formatted
+    assert Vultr.format_data(input_card) == expected_card_formatted
 
 
 def test_formatted_data_card_with_7_items():
@@ -138,7 +138,7 @@ def test_formatted_data_card_with_7_items():
         "bandwidth": "10 TB"
     }
 
-    assert format_data(input_card) == expected_card_formatted
+    assert Vultr.format_data(input_card) == expected_card_formatted
 
 
 def test_formatted_data_card_with_6_items():
@@ -159,16 +159,16 @@ def test_formatted_data_card_with_6_items():
         "bandwidth": "5 TB"
     }
 
-    assert format_data(input_card) == expected_card_formatted
+    assert Vultr.format_data(input_card) == expected_card_formatted
 
 
 def test_if_size_list_bigger_then_expected():
     bigger_size = 10
 
-    assert get_list_to_zip(bigger_size) is None
+    assert Vultr.get_list_to_zip(bigger_size) is None
 
 
 def test_if_size_list_smaller_then_expected():
     bigger_size = 3
 
-    assert get_list_to_zip(bigger_size) is None
+    assert Vultr.get_list_to_zip(bigger_size) is None
