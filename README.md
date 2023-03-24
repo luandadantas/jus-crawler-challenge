@@ -53,7 +53,17 @@ pip install -r requirements.txt
 Run the project
 
 ```bash
-python3 main.py
+python main.py
+```
+
+If you just want to print Vultr or Hostgator individually, run each script separately using
+
+```bash
+python scrape/hostgator.py
+```
+or 
+```bash
+python scrape/vultr.py
 ```
 
 ## Running Tests
